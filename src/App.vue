@@ -19,7 +19,3 @@ const layout = computed(() => {
 <template>
   <component :is="layout"/>
 </template>
-
-<style scoped>
-
-</style>
