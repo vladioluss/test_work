@@ -11,7 +11,7 @@ defineProps({
 
 // ПОдробный просмотр профиля
 function viewProfile(id: number) {
-  stores.dispatch('getUsers', { id })
+  stores.dispatch('getUsers', id)
       .then(res => stores.commit('setItem', res))
 }
 </script>

@@ -1,4 +1,5 @@
 import axios from "axios";
+import stores from "@/stores";
 
 
 const apiInstance = axios.create({
@@ -8,6 +9,18 @@ const apiInstance = axios.create({
     'Access-Control-Allow-Origin': '*',
   }
 })
+
+// Добавляем перехват ответов
+apiInstance.interceptors.response.use(function (response) {
+  // Любой код состояния, находящийся в диапазоне 2xx, вызывает срабатывание этой функции
+  return response
+}, function (error) {
+  // Любые коды состояния, выходящие за пределы диапазона 2xx, вызывают срабатывание этой функции
+  // Записываем ошибку в стор
+  stores.commit('setError', error)
+  return Promise.reject(error)
+})
+
 
 /** Получение всех или определенного элемента */
 export function getItems(url: string, params: object = {}) {

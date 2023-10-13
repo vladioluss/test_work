@@ -4,11 +4,12 @@ import {getItems} from "@/app/api";
 
 interface State {
   items: object[]
+  item: object
 }
 
 const state: State = {
-  items: [],
   item: {},
+  items: [],
 }
 
 const getters: GetterTree<State, any> = {
@@ -18,18 +19,34 @@ const getters: GetterTree<State, any> = {
 }
 
 const mutations: MutationTree<State> = {
-  setItems(state, items) {
+  setItems(state, items): void {
     state.items = items
   },
 
-  setItem(state, item) {
+  setItem(state, item): void {
     state.item = item[0]
   },
 }
 
 const actions: ActionTree<State, any> = {
-  async getUsers({ commit }: any, data: object) {
-    return await getItems('users', data)
+  async getUsers({ commit }: any, data: any) {
+    // Ищем по id
+    const numbers =
+      (String(data?.value ?? data)?.split(',') ?? [])
+        .filter(el => isFinite(Number(el.trim())))
+
+    // Ищем по username
+    const users =
+      (String(data?.value ?? data)?.split(',') ?? [])
+        .filter(el => !isFinite(Number(el.trim())))
+
+    // Собираем параметры поиска
+    const params = [
+      ...numbers.length ? [`?id=${numbers.join('&id=')}`] : [],
+      ...users.length ? [`?username=${users.join('&username=')}`] : [],
+    ].join('&')
+
+    return await getItems(`users${params}`)
       .then(result => {
         commit('setItems', result.data)
         return result.data

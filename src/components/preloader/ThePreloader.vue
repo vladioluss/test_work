@@ -1,23 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-const loading = ref(true);
-
-setTimeout(() => {
-  loading.value = false
-}, 2000)
 </script>
 
 <template>
-  <div>
-    <!-- Прелоадер -->
-    <div v-if="loading" class="preloader">
-      Загрузка...
-    </div>
+  <div class="preloader">
+    Загрузка...
   </div>
 </template>
 
 <style scoped lang="scss">
 .preloader {
+  z-index: 999;
   position: fixed;
   top: 0;
   left: 0;

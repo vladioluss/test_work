@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import stores from "@/stores/";
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import ResultSearchItem from "@/components/search/ResultSearchItem.vue";
 
 let searchText = ref(null)
@@ -10,22 +10,32 @@ const lenItems = computed(() => stores.getters.lenItems)
 // Показывать ли запись "начните поиск"
 let startSearch = true
 
+let timeoutId: number;
+
+watch(searchText, (value, oldValue) => {
+  if (!value) {
+    stores.commit('setItems', [])
+    // stores.commit('setItem', {})
+  } else {
+    // Очистка предыдущего таймера, если он существует
+    clearTimeout(timeoutId)
+    // Установка нового таймера для вызова search() после задержки
+    timeoutId = setTimeout(() => {
+      search();
+    }, 1000);
+  }
+})
+
 // Поиск записей
 function search() {
+  stores.commit('setActive', true)
   startSearch = false
 
-  const searchTextValue = searchText.value
-  const isNumeric = isFinite(searchTextValue)
   // Поиск по полю id и полю username
-  // Проверка на поисковое значение
-  const params =
-      isNumeric ?
-      { id: Number(searchTextValue) } :
-      { username: searchTextValue }
-
-  stores.dispatch('getUsers', params)
+  stores.dispatch('getUsers', searchText)
       .then(() => result.value = stores.state.items.items)
       .catch(err => console.error(err))
+      .finally(() => stores.commit('setActive', false))
 }
 </script>
 
@@ -33,7 +43,6 @@ function search() {
   <div class="search">
     <span class="search__title">Поиск сотрудников</span>
     <input
-        @change="search"
         v-model="searchText"
         type="text"
         placeholder="Введите Id или Username"
@@ -50,17 +59,12 @@ function search() {
 
     <div
         class="list-users"
-        v-if="!!lenItems"
-    >
-      <div
-        class="result__search"
-        v-for="item in result"
-        :key="item.id"
-      >
-        <ResultSearchItem
+        v-if="!!lenItems">
+      <ResultSearchItem
+          v-for="item in result"
+          :key="item.id"
           :item="item"
-        />
-      </div>
+      />
     </div>
 
     <span
@@ -83,7 +87,9 @@ function search() {
 .result {
   gap: 10px;
   width: 100%;
+  height: 100%;
   padding-right: 20px;
+  overflow-y: auto;
 
   &__search {
     height: 100%;
@@ -113,5 +119,9 @@ function search() {
 .list-users {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-bottom: 15px;
 }
 </style>
