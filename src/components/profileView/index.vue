@@ -37,13 +37,19 @@ const LOREM = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorum
       <div>
         <img src="@/app/assets/icons/noPhoto.png" alt="noPhoto">
       </div>
-      <div>
+      <div class="info-user">
         <p>{{ user.name }}</p>
-        <p>{{ user.email }}</p>
-        <p>{{ user.phone }}</p>
+        <div class="info-user__contact">
+          <div>
+            <span>email: </span><span>{{ user.email }}</span>
+          </div>
+          <div>
+            <span>phone: </span><span>{{ user.phone }}</span>
+          </div>
+        </div>
         <div>
           <p>О себе</p>
-          <p>{{ LOREM }}</p>
+          <p class="lorem">{{ LOREM }}</p>
         </div>
       </div>
     </div>
@@ -61,6 +67,38 @@ const LOREM = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorum
     display: flex;
     flex-direction: row;
     padding: 30px;
+    gap: 30px;
+    color: #000;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 140%; /* 22.4px */
+
+    img {
+      height: 100%;
+      //width: 100%;
+      max-width: 450px;
+      max-height: 300px;
+      border: 1px solid #E0E0E0;
+    }
+  }
+}
+
+.info-user {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &__contact {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 14px;
+    font-weight: 400;
+
+    span:nth-last-of-type(1) {
+      color: #76787D;
+    }
   }
 }
 
@@ -76,5 +114,11 @@ const LOREM = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorum
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.lorem {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
 }
 </style>
